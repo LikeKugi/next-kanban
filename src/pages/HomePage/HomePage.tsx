@@ -12,9 +12,10 @@ import {
   useSensors
 } from '@dnd-kit/core';
 import HomeTitle from '@/entities/HomeTitle/HomeTitle';
-import GridLayout from '@/entities/GridLayout/GridLayout';
-import DragAndDrop from '@/features/DragAndDrop/DragAndDrop';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import KanbanColumn from '@/entities/kanban/KanbanColumn/KanbanColumn';
+import { Space } from 'antd';
+import KanbanItem from '@/entities/kanban/KanbanItem/KanbanItem';
 
 const HomePage = (): JSX.Element => {
 
@@ -272,7 +273,23 @@ const HomePage = (): JSX.Element => {
                   onDragStart={handleDragStart}
                   onDragMove={handleDragMove}
                   onDragEnd={handleDragEnd}>
-
+        <SortableContext items={containers.map(container => container.id)}>
+          {containers.map(container => (<KanbanColumn id={container.id}
+                                                      title={container.title}
+                                                      key={container.id}
+                                                      onAddItem={() => {
+                                                        setShowAddItemModal(true);
+                                                        setCurrentContainerId(container.id);
+                                                      }}>
+            <SortableContext items={container.items.map(item => item.id)} >
+              <Space direction="vertical" size={'middle'} style={{display: 'flex'}}>
+                {container.items.map(item => (
+                  <KanbanItem id={item.id} title={item.title} key={item.id} />
+                ))}
+              </Space>
+            </SortableContext>
+          </KanbanColumn>))}
+        </SortableContext>
       </DndContext>
     </>
   );
