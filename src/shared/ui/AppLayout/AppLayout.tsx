@@ -9,7 +9,7 @@ const AppLayout: FC<PropsWithChildren> = ({children}): JSX.Element => {
       <Header>
         Header
       </Header>
-      <Content className={styles.AppLayout__content} style={{flexGrow: 1}}>
+      <Content className={styles.AppLayout__content} style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
         {children}
       </Content>
       <Footer>

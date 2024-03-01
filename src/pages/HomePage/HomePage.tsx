@@ -3,7 +3,6 @@
 import { JSX, useState } from 'react';
 import { IDND } from '@/shared/types';
 import {
-  closestCorners,
   DndContext, DragEndEvent, DragMoveEvent, DragStartEvent,
   KeyboardSensor,
   PointerSensor,
@@ -14,8 +13,13 @@ import {
 import HomeTitle from '@/entities/HomeTitle/HomeTitle';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import KanbanColumn from '@/entities/kanban/KanbanColumn/KanbanColumn';
-import { Space } from 'antd';
+import { Flex, Space } from 'antd';
 import KanbanItem from '@/entities/kanban/KanbanItem/KanbanItem';
+import ColumnContainer from '@/shared/ui/ColumnContainer/ColumnContainer';
+import AddColumnButton from '@/features/AddColumnButton/AddColumnButton';
+import { v4 as uuidv4 } from 'uuid';
+import AddColumnModal from '@/features/AddColumnModal/AddColumnModal';
+import AddItemModal from '@/features/AddItemModal/AddItemModal';
 
 const HomePage = (): JSX.Element => {
 
@@ -265,15 +269,72 @@ const HomePage = (): JSX.Element => {
     setActiveId(null);
   }
 
+  const closeModal = () => {
+    setShowAddContainerModal(false);
+    setContainerName('');
+  };
+
+  const createModal = () => {
+    if (!containerName) return;
+    const id = `container-${uuidv4()}`;
+    setContainers([
+      ...containers,
+      {
+        id,
+        title: containerName,
+        items: [],
+      },
+    ]);
+    setContainerName('');
+    setShowAddContainerModal(false);
+  };
+
+  const onChangeContainerName = (value: string) => {
+    setContainerName(value);
+  };
+
+  const closeItemModal = () => {
+    setShowAddItemModal(false);
+  };
+
+  const onChangeItemName = (value: string) => {
+    setItemName(value);
+  };
+
+  const onAddItem = () => {
+    if (!itemName) return;
+    const id = `item-${uuidv4()}`;
+    const container = containers.find((item) => item.id === currentContainerId);
+    if (!container) return;
+    container.items.push({
+      id,
+      title: itemName,
+    });
+    setContainers([...containers]);
+    setItemName('');
+    setShowAddItemModal(false);
+  };
+
   return (
     <>
       <HomeTitle title={'Kanban Board'}/>
+      <AddColumnModal closeModal={closeModal}
+                      createModal={createModal}
+                      isShown={showAddContainerModal}
+                      containerName={containerName}
+                      setContainerName={onChangeContainerName}/>
+      <AddItemModal isShown={showAddItemModal}
+                    closeModal={closeItemModal}
+                    itemName={itemName}
+                    onAddItem={onAddItem}
+                    setItemName={onChangeItemName}/>
       <DndContext sensors={sensors}
-                  collisionDetection={closestCorners}
                   onDragStart={handleDragStart}
                   onDragMove={handleDragMove}
                   onDragEnd={handleDragEnd}>
-        <SortableContext items={containers.map(container => container.id)}>
+
+        <Flex gap={'middle'}
+              style={{ flexGrow: 1 }}><SortableContext items={containers.map(container => container.id)}>
           {containers.map(container => (<KanbanColumn id={container.id}
                                                       title={container.title}
                                                       key={container.id}
@@ -281,15 +342,24 @@ const HomePage = (): JSX.Element => {
                                                         setShowAddItemModal(true);
                                                         setCurrentContainerId(container.id);
                                                       }}>
-            <SortableContext items={container.items.map(item => item.id)} >
-              <Space direction="vertical" size={'middle'} style={{display: 'flex'}}>
+            <SortableContext items={container.items.map(item => item.id)}>
+              <Space direction="vertical"
+                     size={'middle'}
+                     style={{ display: 'flex', height: '100%' }}>
+                <p>here</p>
                 {container.items.map(item => (
-                  <KanbanItem id={item.id} title={item.title} key={item.id} />
+                  <KanbanItem id={item.id}
+                              title={item.title}
+                              key={item.id}/>
                 ))}
               </Space>
             </SortableContext>
           </KanbanColumn>))}
         </SortableContext>
+          <ColumnContainer>
+            <AddColumnButton onClick={() => setShowAddContainerModal(true)}>Add Column</AddColumnButton>
+          </ColumnContainer>
+        </Flex>
       </DndContext>
     </>
   );

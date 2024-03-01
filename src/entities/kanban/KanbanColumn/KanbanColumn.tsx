@@ -5,6 +5,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { clsx } from 'clsx';
 import { Button, Card, Space } from 'antd';
 import Meta from 'antd/es/card/Meta';
+import ColumnContainer from '@/shared/ui/ColumnContainer/ColumnContainer';
+import AddItemButton from '@/features/AddItemButton/AddItemButton';
 
 const KanbanColumn: FC<IKanbanColumnProps> = ({ children, id, description, title, onAddItem }): JSX.Element => {
 
@@ -23,39 +25,42 @@ const KanbanColumn: FC<IKanbanColumnProps> = ({ children, id, description, title
   });
 
   return (
-    <Space
-      direction="vertical"
-      size={'middle'}
-      {...attributes}
-      ref={setNodeRef}
-      style={{
-        transition,
-        transform: CSS.Translate.toString(transform),
-        display: 'flex',
-        minHeight: '100%'
-      }}
-      className={clsx(isDragging && 'opacity-50',)}
-    >
-      <Space direction="vertical"
-             size={'middle'}
-             style={{ display: 'flex' }}>
-        <Card>
-          <Meta title={title}
-                description={description}/>
-          <Button type="dashed"
-                  {...listeners}
-          >
-            Drag Handle
-          </Button>
-        </Card>
-      </Space>
+    <ColumnContainer {...attributes}
+                     ref={setNodeRef}
+                     className={clsx(isDragging && 'opacity-50',)}
+                     style={{
+                       transition,
+                       transform: CSS.Translate.toString(transform),
+                     }}>
+      <Space
+        direction="vertical"
+        size={'middle'}
+        style={{
+          display: 'flex',
+          minHeight: '100%'
+        }}
 
-      {children}
-      <Button type="text"
-              onClick={onAddItem}>
-        Add Item
-      </Button>
-    </Space>
+      >
+        <Space direction="vertical"
+               size={'middle'}
+               style={{ display: 'flex' }}>
+          <Card>
+            <Meta title={title}
+                  description={description}/>
+            <Button type="dashed"
+                    style={{ width: '100%' }}
+                    {...listeners}
+            >
+              Drag Handle
+            </Button>
+          </Card>
+        </Space>
+        <AddItemButton onClick={onAddItem}>
+          Add Item
+        </AddItemButton>
+        {children}
+      </Space>
+    </ColumnContainer>
   );
 };
 export default KanbanColumn;
