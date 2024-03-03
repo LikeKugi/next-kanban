@@ -39,7 +39,7 @@ const AddColumnModal: FC<IAddColumnModalProps> = ({closeModal, createModal, isSh
       <Typography>
         Column Title
       </Typography>
-      <Input name={'containerName'} value={containerName} onChange={e => setContainerName(e.target.value)} />
+      <Input autoFocus name={'containerName'} value={containerName} onChange={e => setContainerName(e.target.value)} />
     </Modal>
   );
 };

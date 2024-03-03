@@ -40,7 +40,7 @@ const AddItemModal: FC<IAddItemModalProps> = ({
       <Typography>
         Item Name
       </Typography>
-      <Input value={itemName}
+      <Input autoFocus value={itemName}
              onChange={e => setItemName(e.target.value)}></Input>
     </Modal>
   );

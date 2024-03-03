@@ -28,12 +28,13 @@ const KanbanItem: FC<IKanbanItemProps> = ({ id, title }): JSX.Element => {
   return (
     <Card ref={setNodeRef}
           {...attributes}
+          {...listeners}
           style={{
             transition,
             transform: CSS.Translate.toString(transform),
           }}
           actions={[
-            <Button type="dashed" {...listeners}
+            <Button type="dashed"
                     key={0}>Drag Handle</Button>
           ]}
           className={clsx(isDragging && 'opacity-50')}>

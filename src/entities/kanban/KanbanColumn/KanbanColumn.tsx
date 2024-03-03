@@ -26,6 +26,7 @@ const KanbanColumn: FC<IKanbanColumnProps> = ({ children, id, description, title
 
   return (
     <ColumnContainer {...attributes}
+                     {...listeners}
                      ref={setNodeRef}
                      className={clsx(isDragging && 'opacity-50',)}
                      style={{
@@ -49,7 +50,7 @@ const KanbanColumn: FC<IKanbanColumnProps> = ({ children, id, description, title
                   description={description}/>
             <Button type="dashed"
                     style={{ width: '100%' }}
-                    {...listeners}
+
             >
               Drag Handle
             </Button>
